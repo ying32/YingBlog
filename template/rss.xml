@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[{{.website}} - Ying博客]]></title>
+	<link>http://{{.website}}:90</link>
+	<description><![CDATA[{{.website}} - Ying博客]]></description>
+	<copyright><![CDATA[Copyright 2016, {{.website}}]]></copyright>
+    <pubDate></pubDate>
+	<webMaster>admin@higolang.cn</webMaster>
+	<docs>http://{{.website}}/rss</docs>
+    <language>zh-CN</language>
+	<generator>Rss Generator By {{.website}}</generator>
+    <image>
+      <link>http://{{.website}}:90/</link>
+      <url></url>
+      <title><![CDATA[{{.website}} - Ying博客]]></title>
+    </image>
+	{{range $item := .items}}
+	<item>
+      <title><![CDATA[{{$item.Title}}]]></title>
+	  <author><![CDATA[{{$item.Author}}]]></author>
+      <link>http://{{$.website}}/article/{{$item.Id}}</link>
+      <description><![CDATA[{{$item.Description}}]]></description>
+	  <comments><![CDATA[{{$item.Comments}}]]></comments>
+      <pubDate>{{$item.PubDate}}</pubDate>
+	</item> 
+	{{end}}
+  </channel>
+</rss>

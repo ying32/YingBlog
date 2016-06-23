@@ -1,0 +1,105 @@
+{{define "Title"}}{{if .isedit}}{{.article.Title}} - 编辑{{else}}新建文章{{end}}{{end}}
+{{define "Description"}}Markdown编辑器{{end}}
+{{define "CustomCss"}}
+<link rel="stylesheet" href="/assets/editor.md/css/editormd.min.css" />
+{{end}}
+{{define "Content"}}
+<div class="am-g">
+ <div class="am-u-sm-12">
+  <div class="am-form-group">
+     <input type="text" id="title" class="am-form-field am-radius" placeholder="在这输入文章的标题"  value="{{if .isedit}}{{.article.Title}}{{end}}"/>     
+  </div>
+  <div class="am-form-group">
+      <select data-am-selected="{btnSize: 'sm'}" id="categroy">
+        <option value="-1">--选择文章分类--</option>
+	    {{range $categroy := .categroys}}
+		   {{$id := $categroy.Id}}
+           <option value="{{$id}}" {{if $.isedit}} {{if eq $id $.article.CategoryId}}selected="selected"{{end}} {{end}}>{{$categroy.Name}}</option>
+		{{end}}
+      </select>
+   </div>	  
+
+  <div class="am-form-group">
+    <div class="editormd" id="article-editormd">
+      <!--<textarea style="display:none;"></textarea>-->
+      <textarea class="editormd-markdown-textarea" name="id-markdown-doc">{{if .isedit}}{{.article.MarkdownString}}{{end}}</textarea>
+      <!-- html textarea 需要开启配置项 saveHTMLToTextarea == true -->
+      <textarea class="editormd-html-textarea" name="id-html-code" id="id-html-code"></textarea>
+    </div>
+  </div>
+  <div class="am-cf">
+  <!-- 这里我看用ajax算了，方便修改 -->
+    <button id="submit" onclick="return checkSubmit();" class="am-btn am-btn-primary am-btn-xl am-center">{{if .isedit}}更新{{else}}保存{{end}}文章</button>
+  </div>   
+  </div>
+</div>   
+<br/>
+
+<script src="/assets/editor.md/editormd.min.js"></script>
+<script src="http://apps.bdimg.com/libs/layer/2.1/layer.js"></script>
+
+<script type="text/javascript">
+$(function() {
+     articleEditor = editormd("article-editormd", { 
+         path : "/assets/editor.md/lib/",
+		 codeFold: true,
+		 height: 800,
+		 emoji: true,
+		 placeholder:"在这里输入你的Markdown代码吧, let's go go go!",
+		 saveHTMLToTextarea : true,
+		 imageUpload: true,
+		 imageFormats: ["jpg", "jpeg", "gif", "png", "bmp"],
+		 imageUploadURL: "/admin/upload"
+    });
+});
+
+// 提交检测
+function checkSubmit() {
+	if($("#title").val() == "") {
+		layer.msg("亲，至少得输入一个标题吧！", {time:2000,icon:5});
+		return false;
+	}
+	if($("#categroy").val() == -1) {
+		layer.msg("分类啊，哥！", {time:2000,icon:5});
+		return false;	
+	}
+	if(articleEditor.getMarkdown() == "") {
+		layer.msg("亲，内容呢？你逗我啊！", {time:2000,icon:5});
+		return false;	
+	} 
+	// ie下竟然失失败
+	var htmlstr = $("#id-html-code").text();
+	//if(articleEditor.getHTML() == "") {
+	if(htmlstr == ""){
+		layer.msg("亲，HTML不见了啊，保存失败咯！", {time:2000,icon:5});
+		return false;		
+	}
+	$.ajax({
+		type:"POST",
+		url:"/admin/savearticle",
+		data:{
+		   {{if .isedit}}"id":{{.article.Id}},{{end}}	
+		   "title":$("#title").val(), 
+		   "categroy":$("#categroy").val(),
+		   "id-html-code": htmlstr,//articleEditor.getHTML(),
+		   "id-markdown-doc": articleEditor.getMarkdown()
+		},
+		dateType:"json",
+		success: function(data){
+			layer.closeAll('loading');
+			if(data.success) {
+			    layer.msg(data.message, {time:1000, icon:6});
+				{{if not .isedit}}
+				  setTimeout(function(){window.location.href = "/admin/article/edit/" + data.id}, 300);  
+				{{end}}
+			}
+			else
+			    layer.msg(data.message, {time:1000, icon:5});
+		}
+	});
+	layer.load();
+	return true;
+}
+
+</script>
+{{end}}

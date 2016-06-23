@@ -1,0 +1,62 @@
+{{define "Title"}}统计信息查看{{end}}
+{{define "CustomCss"}}{{end}}
+{{define "Content"}}
+  <!-- content start -->
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">统计信息查看</strong> / <small>Statistic</small></div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <!--<form class="am-form">-->
+          <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+				 <th>访问地址</th>
+				 <th>来源地址</th>
+				 <th>平台</th>
+				 <th class="am-hide-sm-only">操作系统</th>
+			 	 <th class="am-hide-sm-only">浏览器</th>
+				 <th class="am-hide-sm-only">浏览器版本</th>
+				 <th class="am-hide-sm-only">访问时间</th>
+				 <th class="am-hide-sm-only">访问者IP</th>
+              </tr>
+          </thead>
+          <tbody>
+		    {{range $a := .statistics}}
+            <tr>
+				<td><a target="_blank" href="{{$a.URL}}">{{$a.URL}}</a></td>
+				<td><a target="_blank" href="{{$a.RefererHost}}">{{$a.RefererHost}}</a></td>
+				<td>{{$a.Platform}}</td>
+				<td>{{$a.OS}}</td>
+				<td>{{$a.BrowserName}}</td>
+				<td class="am-hide-sm-only">{{$a.BrowserVersion}}</td>			
+				<td class="am-hide-sm-only">{{formatdatetime $a.Time}}</td>
+				<td>{{$a.IP}}<br/>{{$a.Location}}</td>
+            </tr>
+           {{end}}
+          </tbody>
+        </table>
+  <div class="am-cf">
+ 
+  <div class="am-fr">
+    <ul class="am-pagination">
+	  {{html .pages}}
+      <!--<li class="am-disabled"><a href="#">«</a></li>
+      <li class="am-active"><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li><a href="#">»</a></li>-->
+    </ul>
+  </div>
+</div>
+          <hr />
+          <p>注：共计{{.rowCount}}条记录</p>
+        <!--</form>-->
+      </div>
+
+    </div>
+  <!-- content end -->
+<script src="http://apps.bdimg.com/libs/layer/2.1/layer.js"></script>
+{{end}}

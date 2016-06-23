@@ -1,0 +1,92 @@
+<!doctype html>
+<html class="no-js" lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{template "Title" .}} - Ying32博客</title>
+  <meta name="description" content="{{template "Description" .}}">
+  <meta name="keywords" content="Ying32,blog,博客,golang,go,delphi,pascal">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link title="RSS" type="application/rss+xml" rel="alternate" href="/rss"/>
+  <link rel="icon" type="image/png" href="/assets/i/favicon.png">
+{{if not .iseditor}}
+  <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png">
+{{end}}
+  <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+  <!--<link rel="stylesheet" href="/assets/css/amazeui.min.css"/>-->
+  <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.5.2/css/amazeui.min.css"/>
+  <!--<link rel="stylesheet" href="/assets/css/admin.css">-->
+{{template "CustomCss" .}}
+  
+  <!--<script src="/assets/js/jquery.min.js"></script>-->
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>  
+
+</head>
+<body>
+{{html `<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+  以获得更好的体验！</p>
+<![endif]-->`}}
+{{if not .iseditor}}
+
+{{if not .isSignPage}}
+<header class="am-topbar">
+  <h1 class="am-topbar-brand">
+    <a href="/">Ying32的博客</a>
+  </h1>
+
+  <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+          data-am-collapse="{target: '#doc-topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+      class="am-icon-bars"></span></button>
+
+  <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
+    <!-- <ul class="am-nav am-nav-pills am-topbar-nav">
+      <li class="am-active"><a href="#">首页</a></li>
+      <li><a href="#">项目</a></li>
+      <li class="am-dropdown" data-am-dropdown>
+        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+          菜单 <span class="am-icon-caret-down"></span>
+        </a>
+        <ul class="am-dropdown-content">
+          <li class="am-dropdown-header">标题</li>
+          <li><a href="#">关于我们</a></li>
+          <li><a href="#">关于字体</a></li>
+          <li><a href="#">TIPS</a></li>
+        </ul>
+      </li>
+    </ul>
+   -->
+   {{if .showsearch}}
+    <form class="am-topbar-form am-topbar-left am-form-inline am-topbar-right" role="search">
+      <div class="am-form-group">
+        <input type="text" class="am-form-field am-input-sm" placeholder="搜索文章">
+      </div>
+      <button type="submit" class="am-btn am-btn-default am-btn-sm">搜索</button>
+    </form>
+  {{end}} 
+  </div>
+</header>
+{{end}}
+
+{{template "Content" .}}
+
+{{include "footer.html" .}} 
+
+{{else}}
+  {{template "Content" .}}
+{{end}}
+
+{{html `<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="http://cdn.amazeui.org/amazeui/2.5.2/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+`}}
+
+<script src="http://cdn.amazeui.org/amazeui/2.5.2/js/amazeui.min.js"></script>
+<script src="/assets/js/app.js"></script>
+</body>
+</html>

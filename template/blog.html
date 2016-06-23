@@ -1,0 +1,95 @@
+{{define "Title"}}博客{{end}}
+{{define "Description"}}Ying博客主页{{end}}
+{{define "CustomCss"}}
+ 
+  <style>
+    @media only screen and (min-width: 1200px) {.blog-g-fixed { max-width: 1200px;} }
+    @media only screen and (min-width: 641px) { .blog-sidebar { font-size: 1.4rem; } }
+    .blog-main { padding: 20px 0;}
+    .blog-title { margin: 10px 0 20px 0; }
+    .blog-meta { font-size: 14px; margin: 10px 0 20px 0; color: #222; }
+    .blog-meta a { color: #27ae60; }
+    .blog-pagination a {  font-size: 1.4rem; }
+    .blog-team li { padding: 4px;  }
+    .blog-team img {  margin-bottom: 0; }
+    .blog-content img, .blog-team img { max-width: 100%; height: auto; }
+    .blog-footer { padding: 10px 0; text-align: center; }
+  </style>
+  <link rel="stylesheet" href="/assets/editor.md/css/editormd.min.css" />
+{{end}}
+{{define "Content"}}
+<div class="am-g am-g-fixed blog-g-fixed">
+  <div class="am-u-md-8">
+    <!-- <hr class="am-article-divider blog-hr">-->
+    <!--一个文章结构开始-->
+	{{range $article := .articles}}
+    <article class="blog-main">
+      <h3 class="am-article-title">
+        <a target="_blank" href="/article/{{$article.Id}}">{{$article.Title}}</a>
+      </h3>
+	  <!-- 日期, 作者信息部分 -->
+      <h4 class="am-article-meta blog-meta">
+	    由<a href="#">{{$article.Author}}</a>最后编辑于{{formatdatetime $article.LastEditTime}}
+      </h4>
+
+      <div class="am-g blog-content"> 
+	    <div class="markdown-body editormd-preview-container">
+          {{html $article.Summary}}<a target="_blank" href="/article/{{$article.Id}}">阅读全文</a>
+		</div>  
+      </div>
+    </article>
+	{{end}}
+    <!-- 一个文章结构结束 -->
+
+	{{if .showPages}}
+	<hr class="am-article-divider blog-hr">  
+    <ul class="am-pagination blog-pagination">
+      <li class="am-pagination-prev"><a href="/{{.pagePrev}}">&laquo; 上一页</a></li>
+      <li class="am-pagination-next"><a href="/{{.pageNext}}">下一页 &raquo;</a></li>
+    </ul>
+	{{end}}
+  </div>
+
+  <div class="am-u-md-4 blog-sidebar">
+    <div class="am-panel-group">
+      <section class="am-panel am-panel-default">
+        <div class="am-panel-hd">关于我</div>
+        <div class="am-panel-bd">
+          <!-- <p>前所未有的中文云端字型服务，让您在 web 平台上自由使用高品质中文字体，跨平台、可搜寻，而且超美。云端字型是我们的事业，推广字型学知识是我们的志业。从字体出发，关心设计与我们的生活，justfont blog
+            正是為此而生。</p> -->
+		  {{.aboutMe}}
+		  <p></p>
+          <a class="am-btn am-btn-success am-btn-sm" href="/Me">查看更多 →</a>
+        </div>
+      </section>
+	  <section class="am-panel am-panel-default">
+        <div class="am-panel-hd">分类文章</div>
+        <ul class="am-list blog-list">
+		  {{range $categroy := .categroys}}
+		    <li><a target="_blank" href="/categroy/{{$categroy.Id}}">{{$categroy.Name}}</a></li>
+		  {{end}}
+        </ul>
+      </section>
+      <section class="am-panel am-panel-default">
+        <div class="am-panel-hd">最近文章</div>
+        <ul class="am-list blog-list">
+		  {{range $title := .titles}}
+		    <li><a target="_blank" href="/article/{{$title.Id}}">{{$title.Title}}</a></li>
+		  {{end}}
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!--<script src="/assets/lib/prettify/loader/prettify.js"></script>-->
+<script src="http://apps.bdimg.com/libs/prettify/r298/prettify.js"></script>
+
+<script type="text/javascript">
+$(function() {
+	$('.editormd-preview-container pre').addClass("prettyprint linenums");
+    prettyPrint();
+});
+</script>
+
+{{end}}

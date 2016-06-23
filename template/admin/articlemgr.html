@@ -1,0 +1,174 @@
+{{define "Title"}}文章管理{{end}}
+{{define "CustomCss"}}{{end}}
+{{define "Content"}}
+  <!-- content start -->
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">文章管理</strong> / <small>ArticleMgr</small></div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-sm-12 am-u-md-6">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs">
+            <button type="button" class="am-btn am-btn-default" onclick="new_article()"><span class="am-icon-plus"></span> 新增</button>
+            <!--<button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 保存</button>-->
+            <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
+          </div>
+        </div>
+      </div>
+      <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-form-group">
+          <select data-am-selected="{btnSize: 'sm'}">
+		    <option value="-1">所有类别</option>
+		    {{range $categroy := .categroys}}
+            <option value="{{$categroy.Id}}">{{$categroy.Name}}</option>
+			{{end}}
+          </select>
+        </div>
+      </div>
+      <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+          <input type="text" class="am-form-field">
+          <span class="am-input-group-btn">
+            <button class="am-btn am-btn-default" type="button">搜索</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <!--<form class="am-form">-->
+          <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+                <th class="table-check"><input type="checkbox" id="chk_all"  /></th>
+				 <th class="table-id">ID</th>
+				 <th class="table-title">标题</th>
+				 <th class="table-type">分类</th>
+				 <th class="table-author am-hide-sm-only">作者</th>
+				 <th class="table-date am-hide-sm-only">修改日期</th>
+				 <th class="table-set">操作</th>
+              </tr>
+          </thead>
+          <tbody>
+		    {{range $article := .articles}}
+            <tr>
+              <td><input type="checkbox" name="checkarticle" /></td>
+              <td>{{$article.Id}}</td>
+              <td><a target="_blank" href="/article/{{$article.Id}}">{{$article.Title}}</a></td>
+              <td>{{$article.CategoryName}}</td>
+              <td class="am-hide-sm-only">{{$article.Author}}</td>
+              <td class="am-hide-sm-only">{{formatdatetime $article.LastEditTime}}</td>
+              <td>
+                <div class="am-btn-toolbar">
+                  <div class="am-btn-group am-btn-group-xs">
+                    <button class="am-btn am-btn-default am-btn-xs am-text-secondary" onclick="edit_article({{$article.Id}});"><span class="am-icon-pencil-square-o"></span> 编辑</button>
+                    <button class="am-btn am-btn-default am-btn-xs am-hide-sm-only" onclick="setPublic(this, {{$article.Id}}, {{not $article.IsPublic}})"><span class="am-icon-toggle-{{if $article.IsPublic}}on{{else}}off{{end}}"></span> {{if $article.IsPublic}}私有{{else}}公开{{end}}</button>
+                    <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" onclick="delete_article({{$article.Id}})"><span class="am-icon-trash-o"></span> 删除</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+           {{end}}
+          </tbody>
+        </table>
+          <div class="am-cf">
+  <!--共 15 条记录-->
+  <div class="am-fr">
+    <ul class="am-pagination">
+      <li class="am-disabled"><a href="#">«</a></li>
+      <li class="am-active"><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li><a href="#">»</a></li>
+    </ul>
+  </div>
+</div>
+          <hr />
+          <p>注：.....</p>
+        <!--</form>-->
+      </div>
+
+    </div>	
+  <!-- content end -->
+
+<script src="http://apps.bdimg.com/libs/layer/2.1/layer.js"></script>
+<script language="javascript">
+function delete_article(id) {
+	layer.confirm('确认要删除该篇文章吗？',function(index){
+        $.post("/admin/article/del", { 
+             "id": id
+        },
+        function(data){
+		    if (data.success) {
+		        layer.msg(data.message,{icon:1,time:1000});
+				setTimeout(function(){window.location.reload();}, 800);  
+			} else {
+			    layer.msg(data.message,{icon:2,time:1000});
+			}
+        }, 
+        "json");  	
+
+	});
+}
+
+var newindex, editindex
+
+function new_article() {
+	//window.open('/admin/article/new');  
+	newindex = layer.open({
+		title:"新建文章",
+	    type: 2,
+	    content: '/admin/article/new',
+	    area: ['600px', '500px'],
+	    maxmin: true
+	});
+	layer.full(newindex);
+}
+
+function edit_article(id) {
+	//window.open('/admin/article/edit/' + id);  
+	editindex = layer.open({
+		title:"编辑文章",
+	    type: 2,
+	    content: '/admin/article/edit/' + id,
+	    area: ['600px', '500px'],
+	    maxmin: true
+	});
+	layer.full(editindex);
+}
+
+function setPublic(obj, id, val) {
+    $.post("/admin/article/operation", { 
+            "id": id,
+			 "ispublic": val
+        },
+        function(data){
+		    if (data.success) {
+				$(obj).attr("onclick", "setPublic(this, " + id + ", " + !val + ")");
+				if(val) {
+					$(obj).html('<span class="am-icon-toggle-on"></span> 私有');  
+				} else {
+					$(obj).html('<span class="am-icon-toggle-off"></span> 公开'); 
+				}
+				layer.msg(data.message,{icon:1,time:1000}); 
+			} else {
+			    layer.msg(data.message,{icon:2,time:1000});
+			}
+        }, 
+        "json");  
+}
+
+$(function() {
+	$("#chk_all").click(function(){
+		console.log(this.checked)
+	    $("input[name='checkarticle']").attr("checked", this.checked); 
+	});	
+});
+</script>
+
+
+{{end}}
